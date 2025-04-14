@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "appz4", "appz4\appz4.csproj", "{3F6D7602-3B71-46FF-ACA4-DFFC726D4804}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestRoom.DAL", "QuestRoom.DAL\QuestRoom.DAL.csproj", "{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3F6D7602-3B71-46FF-ACA4-DFFC726D4804}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F6D7602-3B71-46FF-ACA4-DFFC726D4804}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F6D7602-3B71-46FF-ACA4-DFFC726D4804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
