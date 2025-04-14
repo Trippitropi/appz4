@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QuestRoom.DAL
 {
-    internal class DbContext
+    public class QuestRoomDbContext
     {
     }
 }
