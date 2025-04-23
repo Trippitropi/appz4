@@ -1,29 +1,25 @@
-﻿using appz4;
+﻿using System;
+using System.Linq;
+using appz4;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using QuestRoom.DAL;
 using QuestRoom.DAL.Entities;
 using QuestRoom.DAL.QuestRoom.DAL;
 using QuestRoom.DAL.Repositories;
-using System;
-using System.Linq;
 
 class Program
 {
    
-
-    private static ServiceProvider _serviceProvider;
+    private static QuestService _questService;
+    private static ClientService _clientService;
+    private static BookingService _bookingService;
+    private static GiftCertificateService _certificateService;
+    private static QuestRoomDbContext _dbContext;
 
     static void Main(string[] args)
     {
-         Console.OutputEncoding = System.Text.Encoding.UTF8;
-        SetupDependencyInjection();
-
-        var questService = _serviceProvider.GetService<QuestService>();
-        var clientService = _serviceProvider.GetService<ClientService>();
-        var bookingService = _serviceProvider.GetService<BookingService>();
-        var certificateService = _serviceProvider.GetService<GiftCertificateService>();
-
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        InitializeServices();
         SeedData();
 
         bool exit = false;
@@ -46,22 +42,22 @@ class Program
             switch (option)
             {
                 case "1":
-                    ShowAllQuests(questService);
+                    ShowAllQuests();
                     break;
                 case "2":
-                    ShowAllBookings(bookingService);
+                    ShowAllBookings();
                     break;
                 case "3":
-                    CreateBooking(questService, clientService, bookingService, certificateService);
+                    CreateBooking();
                     break;
                 case "4":
-                    CreateGiftCertificate(clientService, questService, certificateService);
+                    CreateGiftCertificate();
                     break;
                 case "5":
-                    CancelBooking(bookingService);
+                    CancelBooking();
                     break;
                 case "6":
-                    AddNewClient(clientService);
+                    AddNewClient();
                     break;
                 case "0":
                     exit = true;
@@ -78,67 +74,57 @@ class Program
             }
         }
 
-        _serviceProvider.Dispose();
+        
+        _dbContext.Dispose();
     }
 
-    private static void SetupDependencyInjection()
+    private static void InitializeServices()
     {
-        var services = new ServiceCollection();
+        _dbContext = new QuestRoomDbContext(new DbContextOptionsBuilder<QuestRoomDbContext>()
+            .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=QuestRoomDb;Trusted_Connection=True;")
+            .Options);
 
-        services.AddDbContext<QuestRoomDbContext>(options =>
-            options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=QuestRoomDb;Trusted_Connection=True;"));
+       
+        var questRepository = new QuestRepository(_dbContext);
+        var bookingRepository = new BookingRepository(_dbContext);
+        var clientRepository = new ClientRepository(_dbContext);
+        var certificateRepository = new GiftCertificateRepository(_dbContext);
 
-        // Реєстрація репозиторіїв
-        services.AddScoped<QuestRepository>();
-        services.AddScoped<BookingRepository>();
-        services.AddScoped<ClientRepository>();
-        services.AddScoped<GiftCertificateRepository>();
-
-        // Реєстрація сервісів
-        services.AddScoped<QuestService>();
-        services.AddScoped<BookingService>();
-        services.AddScoped<ClientService>();
-        services.AddScoped<GiftCertificateService>();
-
-        _serviceProvider = services.BuildServiceProvider();
+        
+        _questService = new QuestService(questRepository);
+        _bookingService = new BookingService(bookingRepository, questRepository, certificateRepository);
+        _clientService = new ClientService(clientRepository);
+        _certificateService = new GiftCertificateService(certificateRepository);
     }
 
     private static void SeedData()
     {
-        using (var scope = _serviceProvider.CreateScope())
+        _dbContext.Database.EnsureCreated();
+
+        if (!_dbContext.Quests.Any())
         {
-            var dbContext = scope.ServiceProvider.GetService<QuestRoomDbContext>();
-            dbContext.Database.EnsureCreated();
-
-            // Додаємо тестові дані, якщо база даних порожня
-            if (!dbContext.Quests.Any())
+            var quests = new[]
             {
-                
-                var quests = new[]
-                {
-                        new Quest { Name = "Загадка стародавнього замку", Description = "Розкрийте таємницю, що приховує стародавній замок.", MaxParticipants = 6, DurationMinutes = 60, Price = 800M, DifficultyLevel = "Середній",ImageUrl = "placeholder.jpg" },
-                        new Quest { Name = "Втеча з в'язниці", Description = "Знайдіть шлях для втечі з добре охоронюваної в'язниці.", MaxParticipants = 4, DurationMinutes = 45, Price = 600M, DifficultyLevel = "Складний",ImageUrl = "placeholder.jpg" },
-                        new Quest { Name = "Піратський скарб", Description = "Знайдіть скарб, який заховав легендарний пірат.", MaxParticipants = 8, DurationMinutes = 90, Price = 1000M, DifficultyLevel = "Легкий" ,ImageUrl = "placeholder.jpg"}
-                    };
-                dbContext.Quests.AddRange(quests);
+                new Quest { Name = "Загадка стародавнього замку", Description = "Розкрийте таємницю, що приховує стародавній замок.", MaxParticipants = 6, DurationMinutes = 60, Price = 800M, DifficultyLevel = "Середній", ImageUrl = "placeholder.jpg" },
+                new Quest { Name = "Втеча з в'язниці", Description = "Знайдіть шлях для втечі з добре охоронюваної в'язниці.", MaxParticipants = 4, DurationMinutes = 45, Price = 600M, DifficultyLevel = "Складний", ImageUrl = "placeholder.jpg" },
+                new Quest { Name = "Піратський скарб", Description = "Знайдіть скарб, який заховав легендарний пірат.", MaxParticipants = 8, DurationMinutes = 90, Price = 1000M, DifficultyLevel = "Легкий", ImageUrl = "placeholder.jpg" }
+            };
+            _dbContext.Quests.AddRange(quests);
 
-                var clients = new[]
-                {
+            var clients = new[]
+            {
+                new Client { Name = "Андрій Петренко", Email = "andrii@example.com", Phone = "0991234567" },
+                new Client { Name = "Олена Ковальчук", Email = "olena@example.com", Phone = "0671234567" },
+            };
+            _dbContext.Clients.AddRange(clients);
 
-                        new Client { Name = "Андрій Петренко", Email = "andrii@example.com", Phone = "0991234567" },
-                        new Client { Name = "Олена Ковальчук", Email = "olena@example.com", Phone = "0671234567" },
-
-                    };
-                dbContext.Clients.AddRange(clients);
-
-                dbContext.SaveChanges();
-            }
+            _dbContext.SaveChanges();
         }
     }
 
-    private static void ShowAllQuests(QuestService questService)
+    private static void ShowAllQuests()
     {
-        var quests = questService.GetAllQuests();
+        var quests = _questService.GetAllQuests();
         Console.WriteLine("=== Доступні квести ===");
         foreach (var quest in quests)
         {
@@ -146,9 +132,9 @@ class Program
         }
     }
 
-    private static void ShowAllBookings(BookingService bookingService)
+    private static void ShowAllBookings()
     {
-        var bookings = bookingService.GetAllBookings();
+        var bookings = _bookingService.GetAllBookings();
         Console.WriteLine("=== Всі бронювання ===");
         foreach (var booking in bookings)
         {
@@ -156,11 +142,11 @@ class Program
         }
     }
 
-    private static void CreateBooking(QuestService questService, ClientService clientService, BookingService bookingService, GiftCertificateService certificateService)
+    private static void CreateBooking()
     {
         Console.WriteLine("=== Створення нового бронювання ===");
 
-        ShowAllQuests(questService);
+        ShowAllQuests();
         Console.Write("Введіть ID квесту: ");
         if (!int.TryParse(Console.ReadLine(), out int questId))
         {
@@ -168,15 +154,14 @@ class Program
             return;
         }
 
-        var quest = questService.GetQuestById(questId);
+        var quest = _questService.GetQuestById(questId);
         if (quest == null)
         {
             Console.WriteLine("Квест з таким ID не знайдено.");
             return;
         }
 
-        
-        var clients = clientService.GetAllClients();
+        var clients = _clientService.GetAllClients();
         Console.WriteLine("\n=== Доступні клієнти ===");
         foreach (Client client1 in clients)
         {
@@ -190,14 +175,13 @@ class Program
             return;
         }
 
-        var client = clientService.GetClientById(clientId);
+        var client = _clientService.GetClientById(clientId);
         if (client == null)
         {
             Console.WriteLine("Клієнт з таким ID не знайдено.");
             return;
         }
 
-      
         Console.Write("Введіть дату (формат: yyyy-MM-dd): ");
         var dateString = Console.ReadLine();
 
@@ -210,7 +194,6 @@ class Program
             return;
         }
 
-      
         Console.Write($"Введіть кількість учасників (макс. {quest.MaxParticipants}): ");
         if (!int.TryParse(Console.ReadLine(), out int participants) || participants <= 0 || participants > quest.MaxParticipants)
         {
@@ -218,7 +201,6 @@ class Program
             return;
         }
 
-        
         Console.Write("Використати подарунковий сертифікат? (y/n): ");
         string useCertificate = Console.ReadLine()?.ToLower();
 
@@ -228,15 +210,14 @@ class Program
             Console.Write("Введіть код сертифіката: ");
             certificateCode = Console.ReadLine();
 
-            if (!certificateService.IsValidCertificate(certificateCode))
+            if (!_certificateService.IsValidCertificate(certificateCode))
             {
                 Console.WriteLine("Помилка! Недійсний сертифікат або термін його дії закінчився.");
                 return;
             }
         }
 
-        
-        bool success = bookingService.CreateBooking(questId, clientId, startTime, participants, certificateCode);
+        bool success = _bookingService.CreateBooking(questId, clientId, startTime, participants, certificateCode);
 
         if (success)
             Console.WriteLine("Бронювання успішно створено!");
@@ -244,8 +225,7 @@ class Program
             Console.WriteLine("Не вдалося створити бронювання. Перевірте чи часовий слот доступний.");
     }
 
-
-    private static void AddNewClient(ClientService clientService)
+    private static void AddNewClient()
     {
         Console.WriteLine("=== Додавання нового клієнта ===");
 
@@ -258,14 +238,12 @@ class Program
         Console.Write("Введіть номер телефону клієнта: ");
         string phone = Console.ReadLine();
 
-        // Валідація введених даних
         if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(phone))
         {
             Console.WriteLine("Помилка! Всі поля повинні бути заповнені.");
             return;
         }
 
-        // Створюємо нового клієнта
         var client = new Client
         {
             Name = name,
@@ -273,17 +251,16 @@ class Program
             Phone = phone
         };
 
-        // Додаємо в базу даних
-        clientService.AddClient(client);
+        _clientService.AddClient(client);
 
         Console.WriteLine($"Клієнт '{name}' успішно доданий з ID: {client.Id}");
     }
-    private static void CreateGiftCertificate(ClientService clientService, QuestService questService, GiftCertificateService certificateService)
+
+    private static void CreateGiftCertificate()
     {
         Console.WriteLine("=== Створення подарункового сертифіката ===");
 
-       
-        var clients = clientService.GetAllClients();
+        var clients = _clientService.GetAllClients();
         Console.WriteLine("\n=== Доступні клієнти ===");
         foreach (var client in clients)
         {
@@ -310,7 +287,7 @@ class Program
         int? questId = null;
         if (forSpecificQuest == "y")
         {
-            ShowAllQuests(questService);
+            ShowAllQuests();
             Console.Write("Введіть ID квесту: ");
             if (!int.TryParse(Console.ReadLine(), out int id))
             {
@@ -320,7 +297,6 @@ class Program
             questId = id;
         }
 
-        // Термін дії
         Console.Write("Термін дії (днів, за замовчуванням 180): ");
         string validityInput = Console.ReadLine();
         int validityDays = 180;
@@ -331,17 +307,16 @@ class Program
             return;
         }
 
-        // Створення сертифіката
-        var certificate = certificateService.CreateCertificate(clientId, questId, validityDays);
+        var certificate = _certificateService.CreateCertificate(clientId, questId, validityDays);
 
         Console.WriteLine($"Сертифікат успішно створено! Код: {certificate.Code}, Дійсний до: {certificate.ExpiryDate.ToShortDateString()}");
     }
 
-    private static void CancelBooking(BookingService bookingService)
+    private static void CancelBooking()
     {
         Console.WriteLine("=== Скасування бронювання ===");
 
-        var bookings = bookingService.GetAllBookings();
+        var bookings = _bookingService.GetAllBookings();
         Console.WriteLine("=== Активні бронювання ===");
         foreach (var booking in bookings.Where(b => b.Status != "Скасовано"))
         {
@@ -352,6 +327,14 @@ class Program
         if (!int.TryParse(Console.ReadLine(), out int bookingId))
         {
             Console.WriteLine("Помилка! Невірний формат ID.");
+            return;
         }
+
+        bool success = _bookingService.CancelBooking(bookingId);
+
+        if (success)
+            Console.WriteLine("Бронювання успішно скасовано!");
+        else
+            Console.WriteLine("Помилка при скасуванні бронювання. Перевірте ID.");
     }
 }
