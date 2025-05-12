@@ -13,7 +13,7 @@ namespace QuestRoom.DAL.Repositories
         {
         }
 
-        // Отримуємо бронювання з інформацією про квест та клієнта (жадібне завантаження)
+      
         public override Booking GetById(int id)
         {
             return _context.Bookings
@@ -23,7 +23,7 @@ namespace QuestRoom.DAL.Repositories
                 .FirstOrDefault(b => b.Id == id);
         }
 
-        // Отримуємо всі бронювання для конкретного квесту
+        
         public IEnumerable<Booking> GetBookingsByQuestId(int questId)
         {
             return _context.Bookings
@@ -32,7 +32,7 @@ namespace QuestRoom.DAL.Repositories
                 .ToList();
         }
 
-        // Перевіряємо, чи доступний квест у певний час
+       
         public bool IsTimeSlotAvailable(int questId, DateTime startTime, DateTime endTime)
         {
             return !_context.Bookings

@@ -29,12 +29,11 @@ namespace QuestRoom.DAL.Entities
 
         public bool IsPaid { get; set; } = false;
 
-        // Статус може бути: Очікує, Підтверджено, Завершено, Скасовано
+        
         [Required]
         [StringLength(20)]
         public string Status { get; set; } = "Очікує";
 
-        // Зовнішні ключі
         [Required]
         public int QuestId { get; set; }
 
@@ -43,7 +42,7 @@ namespace QuestRoom.DAL.Entities
 
         public int? GiftCertificateId { get; set; }
 
-        // Навігаційні властивості
+        
         [ForeignKey("QuestId")]
         public virtual Quest Quest { get; set; }
 

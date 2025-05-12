@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QuestRoom.BLL\QuestRoom.BLL.csproj" />
     <ProjectReference Include="..\QuestRoom.DAL\QuestRoom.DAL.csproj" />
   </ItemGroup>
 

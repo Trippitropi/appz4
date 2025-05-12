@@ -25,21 +25,21 @@ namespace QuestRoom.DAL.Entities
 
         public bool IsUsed { get; set; } = false;
 
-        // Зовнішній ключ для клієнта, який володіє сертифікатом
+       
         public int? ClientId { get; set; }
 
-        // Зовнішній ключ для квесту, для якого цей сертифікат дійсний (необов'язково, може бути для будь-якого квесту)
+      
         public int? QuestId { get; set; }
 
-        // Навігаційна властивість
+        
         [ForeignKey("ClientId")]
         public virtual Client Owner { get; set; }
 
-        // Навігаційна властивість
+      
         [ForeignKey("QuestId")]
         public virtual Quest Quest { get; set; }
 
-        // Навігаційна властивість до бронювання, де був використаний сертифікат (якщо таке є)
+        
         public virtual Booking UsedInBooking { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace QuestRoom.DAL.Repositories
         {
         }
 
-        // Отримуємо клієнта з його бронюваннями (жадібне завантаження)
+      
         public Client GetClientWithBookings(int id)
         {
             return _context.Clients
@@ -21,7 +21,6 @@ namespace QuestRoom.DAL.Repositories
                 .FirstOrDefault(c => c.Id == id);
         }
 
-        // Отримуємо клієнта з його сертифікатами
         public Client GetClientWithCertificates(int id)
         {
             return _context.Clients

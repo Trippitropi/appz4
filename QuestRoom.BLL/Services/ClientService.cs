@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appz4
+namespace QuestRoom.BLL.Services
 {
     public class ClientService
     {

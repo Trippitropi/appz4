@@ -35,11 +35,11 @@ namespace QuestRoom.DAL.Entities
 
         public bool IsActive { get; set; } = true;
 
-        // Рівень складності (наприклад, Легкий, Середній, Складний)
+      
         [StringLength(20)]
         public string DifficultyLevel { get; set; }
 
-        // Навігаційна властивість для представлення зв'язку один-до-багатьох з бронюваннями
+        
         public virtual ICollection<Booking> Bookings { get; set; }
 
         public Quest()

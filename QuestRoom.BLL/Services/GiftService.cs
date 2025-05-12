@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appz4
+namespace QuestRoom.BLL.Services
 {
     public class GiftCertificateService
     {
@@ -32,7 +32,7 @@ namespace appz4
             return _certificateRepository.IsValidCertificate(code);
         }
 
-        // Створення нового сертифіката
+
         public GiftCertificate CreateCertificate(int? clientId, int? questId, int validityDays = 180)
         {
             var certificate = new GiftCertificate
@@ -50,7 +50,7 @@ namespace appz4
             return certificate;
         }
 
-        // Генерація унікального коду сертифіката
+
         private string GenerateUniqueCode()
         {
             string code;

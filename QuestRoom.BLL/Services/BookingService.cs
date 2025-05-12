@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace appz4
+namespace QuestRoom.BLL.Services
 {
     public class BookingService
     {
@@ -39,28 +39,28 @@ namespace appz4
             return new List<Booking>(_bookingRepository.GetBookingsByQuestId(questId));
         }
 
-      
+
         public bool CreateBooking(int questId, int clientId, DateTime startTime, int participantsCount, string certificateCode = null)
         {
             Quest quest = _questRepository.GetById(questId);
             if (quest == null)
                 return false;
 
-            
+
             if (participantsCount > quest.MaxParticipants)
                 return false;
 
 
             DateTime endTime = startTime.AddMinutes(quest.DurationMinutes);
 
-            
+
             if (!_bookingRepository.IsTimeSlotAvailable(questId, startTime, endTime))
                 return false;
 
             decimal totalPrice = quest.Price;
             GiftCertificate certificate = null;
 
-            
+
             if (!string.IsNullOrEmpty(certificateCode))
             {
                 certificate = _certificateRepository.GetByCode(certificateCode);
@@ -68,16 +68,16 @@ namespace appz4
                 {
                     if (certificate.QuestId == null || certificate.QuestId == questId)
                     {
-                        totalPrice = 0; 
+                        totalPrice = 0;
                     }
                 }
                 else
                 {
-                    certificate = null; 
+                    certificate = null;
                 }
             }
 
-           
+
             var booking = new Booking
             {
                 QuestId = questId,
@@ -93,7 +93,7 @@ namespace appz4
 
             _bookingRepository.Add(booking);
 
-           
+
             if (certificate != null)
             {
                 certificate.IsUsed = true;
@@ -104,7 +104,7 @@ namespace appz4
             return true;
         }
 
-        
+
         public bool CancelBooking(int bookingId)
         {
             var booking = _bookingRepository.GetById(bookingId);

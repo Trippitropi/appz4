@@ -11,7 +11,7 @@ namespace QuestRoom.DAL.Repositories
         {
         }
 
-        // "Жадібне" завантаження - отримуємо квест з усіма бронюваннями
+        
         public Quest GetQuestWithBookings(int id)
         {
             return _context.Quests

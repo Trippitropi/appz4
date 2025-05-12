@@ -23,11 +23,10 @@ namespace QuestRoom.DAL.Entities
         [StringLength(20)]
         public string Phone { get; set; }
 
-        // Навігаційна властивість для представлення зв'язку один-до-багатьох з бронюваннями
+        
         public virtual ICollection<Booking> Bookings { get; set; }
 
-        // Навігаційна властивість для представлення зв'язку один-до-багатьох з подарунковими сертифікатами
-        // (Клієнт може володіти кількома сертифікатами)
+        
         public virtual ICollection<GiftCertificate> OwnedCertificates { get; set; }
 
         public Client()

@@ -14,7 +14,7 @@ namespace QuestRoom.DAL.Repositories
         {
         }
 
-        // Отримуємо активні (не використані) сертифікати для клієнта
+        
         public IEnumerable<GiftCertificate> GetActiveCertificatesForClient(int clientId)
         {
             return _context.GiftCertificates
@@ -22,14 +22,14 @@ namespace QuestRoom.DAL.Repositories
                 .ToList();
         }
 
-        // Перевіряємо чи сертифікат валідний (існує, не використаний і не прострочений)
+       
         public bool IsValidCertificate(string code)
         {
             return _context.GiftCertificates
                 .Any(g => g.Code == code && !g.IsUsed && g.ExpiryDate > DateTime.Now);
         }
 
-        // Отримуємо сертифікат за кодом
+        
         public GiftCertificate GetByCode(string code)
         {
             return _context.GiftCertificates

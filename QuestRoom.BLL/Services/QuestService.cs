@@ -3,7 +3,7 @@ using QuestRoom.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 
-namespace appz4
+namespace QuestRoom.BLL.Services
 {
     public class QuestService
     {
