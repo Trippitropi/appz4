@@ -25,9 +25,6 @@ namespace appz4
 
             // Запуск головного меню
             RunMainMenu(uiController);
-
-            // Закриття контексту БД при виході
-            dbContext.Dispose();
         }
 
         private static void RunMainMenu(QuestRoomUIController controller)

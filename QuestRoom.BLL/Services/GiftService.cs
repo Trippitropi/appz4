@@ -1,5 +1,5 @@
 ﻿using QuestRoom.DAL.Entities;
-using QuestRoom.DAL.Repositories;
+using QuestRoom.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,28 +10,27 @@ namespace QuestRoom.BLL.Services
 {
     public class GiftCertificateService
     {
-        private readonly GiftCertificateRepository _certificateRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GiftCertificateService(GiftCertificateRepository certificateRepository)
+        public GiftCertificateService(IUnitOfWork unitOfWork)
         {
-            _certificateRepository = certificateRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public GiftCertificate GetCertificateById(int id)
         {
-            return _certificateRepository.GetById(id);
+            return _unitOfWork.GiftCertificates.GetById(id);
         }
 
         public List<GiftCertificate> GetActiveCertificatesForClient(int clientId)
         {
-            return new List<GiftCertificate>(_certificateRepository.GetActiveCertificatesForClient(clientId));
+            return new List<GiftCertificate>(_unitOfWork.GiftCertificateRepository.GetActiveCertificatesForClient(clientId));
         }
 
         public bool IsValidCertificate(string code)
         {
-            return _certificateRepository.IsValidCertificate(code);
+            return _unitOfWork.GiftCertificateRepository.IsValidCertificate(code);
         }
-
 
         public GiftCertificate CreateCertificate(int? clientId, int? questId, int validityDays = 180)
         {
@@ -45,11 +44,10 @@ namespace QuestRoom.BLL.Services
                 IsUsed = false
             };
 
-            _certificateRepository.Add(certificate);
-            _certificateRepository.SaveChanges();
+            _unitOfWork.GiftCertificates.Add(certificate);
+            _unitOfWork.Complete();
             return certificate;
         }
-
 
         private string GenerateUniqueCode()
         {
@@ -57,7 +55,7 @@ namespace QuestRoom.BLL.Services
             do
             {
                 code = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
-            } while (_certificateRepository.GetByCode(code) != null);
+            } while (_unitOfWork.GiftCertificateRepository.GetByCode(code) != null);
 
             return code;
         }

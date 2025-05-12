@@ -5,6 +5,7 @@ using QuestRoom.DAL.Entities;
 using QuestRoom.DAL.Repositories;
 using QuestRoom.BLL.Services;
 using QuestRoom.DAL.QuestRoom.DAL;
+using QuestRoom.DAL.UnitOfWork;
 
 namespace appz4
 {
@@ -14,30 +15,23 @@ namespace appz4
         private readonly ClientService _clientService;
         private readonly BookingService _bookingService;
         private readonly GiftCertificateService _certificateService;
-        private readonly QuestRoomDbContext _dbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
         public QuestRoomUIController(QuestRoomDbContext dbContext)
         {
-            _dbContext = dbContext;
+            // Ініціалізація Unit of Work
+            _unitOfWork = new UnitOfWork(dbContext);
 
-            // Ініціалізація репозиторіїв
-            var questRepository = new QuestRepository(_dbContext);
-            var bookingRepository = new BookingRepository(_dbContext);
-            var clientRepository = new ClientRepository(_dbContext);
-            var certificateRepository = new GiftCertificateRepository(_dbContext);
-
-            // Ініціалізація сервісів
-            _questService = new QuestService(questRepository);
-            _bookingService = new BookingService(bookingRepository, questRepository, certificateRepository);
-            _clientService = new ClientService(clientRepository);
-            _certificateService = new GiftCertificateService(certificateRepository);
+            // Ініціалізація сервісів з Unit of Work
+            _questService = new QuestService(_unitOfWork);
+            _clientService = new ClientService(_unitOfWork);
+            _bookingService = new BookingService(_unitOfWork);
+            _certificateService = new GiftCertificateService(_unitOfWork);
         }
 
         public void SeedData()
         {
-            _dbContext.Database.EnsureCreated();
-
-            if (!_dbContext.Quests.Any())
+            if (!_unitOfWork.Quests.GetAll().Any())
             {
                 var quests = new[]
                 {
@@ -45,19 +39,28 @@ namespace appz4
                     new Quest { Name = "Втеча з в'язниці", Description = "Знайдіть шлях для втечі з добре охоронюваної в'язниці.", MaxParticipants = 4, DurationMinutes = 45, Price = 600M, DifficultyLevel = "Складний", ImageUrl = "placeholder.jpg" },
                     new Quest { Name = "Піратський скарб", Description = "Знайдіть скарб, який заховав легендарний пірат.", MaxParticipants = 8, DurationMinutes = 90, Price = 1000M, DifficultyLevel = "Легкий", ImageUrl = "placeholder.jpg" }
                 };
-                _dbContext.Quests.AddRange(quests);
+
+                foreach (var quest in quests)
+                {
+                    _unitOfWork.Quests.Add(quest);
+                }
 
                 var clients = new[]
                 {
                     new Client { Name = "Андрій Петренко", Email = "andrii@example.com", Phone = "0991234567" },
                     new Client { Name = "Олена Ковальчук", Email = "olena@example.com", Phone = "0671234567" },
                 };
-                _dbContext.Clients.AddRange(clients);
 
-                _dbContext.SaveChanges();
+                foreach (var client in clients)
+                {
+                    _unitOfWork.Clients.Add(client);
+                }
+
+                _unitOfWork.Complete();
             }
         }
 
+        // Інші методи залишаються без змін
         public void ShowAllQuests()
         {
             var quests = _questService.GetAllQuests();

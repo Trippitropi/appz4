@@ -1,5 +1,5 @@
 ﻿using QuestRoom.DAL.Entities;
-using QuestRoom.DAL.Repositories;
+using QuestRoom.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,45 +10,43 @@ namespace QuestRoom.BLL.Services
 {
     public class ClientService
     {
-        private readonly ClientRepository _clientRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ClientService(ClientRepository clientRepository)
+        public ClientService(IUnitOfWork unitOfWork)
         {
-            _clientRepository = clientRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public Client GetClientById(int id)
         {
-            return _clientRepository.GetById(id);
+            return _unitOfWork.ClientRepository.GetById(id);
         }
 
         public Client GetClientWithBookings(int id)
         {
-            return _clientRepository.GetClientWithBookings(id);
+            return _unitOfWork.ClientRepository.GetClientWithBookings(id);
         }
 
         public Client GetClientWithCertificates(int id)
         {
-            return _clientRepository.GetClientWithCertificates(id);
+            return _unitOfWork.ClientRepository.GetClientWithCertificates(id);
         }
 
         public List<Client> GetAllClients()
         {
-            return new List<Client>(_clientRepository.GetAll());
+            return new List<Client>(_unitOfWork.Clients.GetAll());
         }
 
         public void AddClient(Client client)
         {
-            _clientRepository.Add(client);
-            _clientRepository.SaveChanges();
+            _unitOfWork.Clients.Add(client);
+            _unitOfWork.Complete();
         }
 
         public void UpdateClient(Client client)
         {
-            _clientRepository.Update(client);
-            _clientRepository.SaveChanges();
+            _unitOfWork.Clients.Update(client);
+            _unitOfWork.Complete();
         }
     }
-
-
 }
