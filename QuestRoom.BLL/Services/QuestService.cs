@@ -2,16 +2,17 @@
 using QuestRoom.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace QuestRoom.BLL.Services
 {
-    public class QuestService
+    public class QuestService : IQuestService
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public QuestService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public List<Quest> GetAllQuests()

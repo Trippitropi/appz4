@@ -3,18 +3,16 @@ using QuestRoom.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestRoom.BLL.Services
 {
-    public class ClientService
+    public class ClientService : IClientService
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public ClientService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public Client GetClientById(int id)

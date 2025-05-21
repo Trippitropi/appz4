@@ -10,124 +10,48 @@ namespace QuestRoom.DAL.UnitOfWork
         private readonly QuestRoomDbContext _context;
         private bool _disposed = false;
 
-        // Загальні репозиторії
+        // Поля для загальних репозиторіїв
         private IRepository<Quest> _quests;
         private IRepository<Booking> _bookings;
         private IRepository<Client> _clients;
         private IRepository<GiftCertificate> _giftCertificates;
 
-        // Спеціалізовані репозиторії
-        private QuestRepository _questRepository;
-        private BookingRepository _bookingRepository;
-        private ClientRepository _clientRepository;
-        private GiftCertificateRepository _giftCertificateRepository;
+        // Поля для спеціалізованих репозиторіїв
+        private IQuestRepository _questRepository;
+        private IBookingRepository _bookingRepository;
+        private IClientRepository _clientRepository;
+        private IGiftCertificateRepository _giftCertificateRepository;
 
         public UnitOfWork(QuestRoomDbContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        // Властивості для загальних репозиторіїв
-        public IRepository<Quest> Quests
-        {
-            get
-            {
-                if (_quests == null)
-                {
-                    _quests = new Repository<Quest>(_context);
-                }
-                return _quests;
-            }
-        }
+        // Властивості для загальних репозиторіїв з лінивою ініціалізацією
+        public IRepository<Quest> Quests =>
+            _quests ??= new Repository<Quest>(_context);
 
-        public IRepository<Booking> Bookings
-        {
-            get
-            {
-                if (_bookings == null)
-                {
-                    _bookings = new Repository<Booking>(_context);
-                }
-                return _bookings;
-            }
-        }
+        public IRepository<Booking> Bookings =>
+            _bookings ??= new Repository<Booking>(_context);
 
-        public IRepository<Client> Clients
-        {
-            get
-            {
-                if (_clients == null)
-                {
-                    _clients = new Repository<Client>(_context);
-                }
-                return _clients;
-            }
-        }
+        public IRepository<Client> Clients =>
+            _clients ??= new Repository<Client>(_context);
 
-        public IRepository<GiftCertificate> GiftCertificates
-        {
-            get
-            {
-                if (_giftCertificates == null)
-                {
-                    _giftCertificates = new Repository<GiftCertificate>(_context);
-                }
-                return _giftCertificates;
-            }
-        }
+        public IRepository<GiftCertificate> GiftCertificates =>
+            _giftCertificates ??= new Repository<GiftCertificate>(_context);
 
-        // Властивості для спеціалізованих репозиторіїв
-        public QuestRepository QuestRepository
-        {
-            get
-            {
-                if (_questRepository == null)
-                {
-                    _questRepository = new QuestRepository(_context);
-                }
-                return _questRepository;
-            }
-        }
+        // Властивості для спеціалізованих репозиторіїв з лінивою ініціалізацією
+        public IQuestRepository QuestRepository =>
+            _questRepository ??= new QuestRepository(_context);
 
-        public BookingRepository BookingRepository
-        {
-            get
-            {
-                if (_bookingRepository == null)
-                {
-                    _bookingRepository = new BookingRepository(_context);
-                }
-                return _bookingRepository;
-            }
-        }
+        public IBookingRepository BookingRepository =>
+            _bookingRepository ??= new BookingRepository(_context);
 
-        public ClientRepository ClientRepository
-        {
-            get
-            {
-                if (_clientRepository == null)
-                {
-                    _clientRepository = new ClientRepository(_context);
-                }
-                return _clientRepository;
-            }
-        }
+        public IClientRepository ClientRepository =>
+            _clientRepository ??= new ClientRepository(_context);
 
-        public GiftCertificateRepository GiftCertificateRepository
-        {
-            get
-            {
-                if (_giftCertificateRepository == null)
-                {
-                    _giftCertificateRepository = new GiftCertificateRepository(_context);
-                }
-                return _giftCertificateRepository;
-            }
-        }
+        public IGiftCertificateRepository GiftCertificateRepository =>
+            _giftCertificateRepository ??= new GiftCertificateRepository(_context);
 
         // Метод для збереження всіх змін
         public int Complete()

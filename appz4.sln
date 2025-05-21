@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "appz4", "appz4\appz4.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestRoom.DAL", "QuestRoom.DAL\QuestRoom.DAL.csproj", "{7062EBFA-5BF7-43EF-953A-BADC3AE1BDEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestRoom.BLL", "QuestRoom.BLL\QuestRoom.BLL.csproj", "{EC0A5318-3A3B-475B-927E-17648C4A6D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuestRoom.BLL", "QuestRoom.BLL\QuestRoom.BLL.csproj", "{EC0A5318-3A3B-475B-927E-17648C4A6D56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuestRoom.Tests", "QuestRoom.Tests\QuestRoom.Tests.csproj", "{7647A128-7FA4-4154-A9FE-D5AD6415F73A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{EC0A5318-3A3B-475B-927E-17648C4A6D56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC0A5318-3A3B-475B-927E-17648C4A6D56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC0A5318-3A3B-475B-927E-17648C4A6D56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7647A128-7FA4-4154-A9FE-D5AD6415F73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7647A128-7FA4-4154-A9FE-D5AD6415F73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7647A128-7FA4-4154-A9FE-D5AD6415F73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7647A128-7FA4-4154-A9FE-D5AD6415F73A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

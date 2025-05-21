@@ -13,7 +13,7 @@ namespace QuestRoom.DAL.Repositories
 
         public Repository(QuestRoomDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
             _dbSet = context.Set<TEntity>();
         }
 
@@ -57,11 +57,7 @@ namespace QuestRoom.DAL.Repositories
         {
             _dbSet.RemoveRange(entities);
         }
-
-        public void SaveChanges()
-        {
-            _context.SaveChanges();
-        }
     }
+
 }
 

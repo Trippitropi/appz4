@@ -1,8 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using QuestRoom.DAL;
 using QuestRoom.BLL.Services;
 using QuestRoom.DAL.QuestRoom.DAL;
+using QuestRoom.DAL.Repositories;
+using QuestRoom.DAL.UnitOfWork;
+using QuestRoom.DAL.Entities;
 
 namespace appz4
 {
@@ -12,13 +16,41 @@ namespace appz4
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            // Ініціалізація контексту бази даних
-            var dbContext = new QuestRoomDbContext(new DbContextOptionsBuilder<QuestRoomDbContext>()
-                .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=QuestRoomDb;Trusted_Connection=True;")
-                .Options);
+            // Створення сервісів
+            var services = new ServiceCollection();
 
-            // Ініціалізація контролера UI
-            var uiController = new QuestRoomUIController(dbContext);
+            // Реєстрація контексту БД
+            services.AddDbContext<QuestRoomDbContext>(options =>
+                options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=QuestRoomDb;Trusted_Connection=True;"));
+
+            // Реєстрація репозиторіїв
+            services.AddScoped<IRepository<Quest>, Repository<Quest>>();
+            services.AddScoped<IRepository<Booking>, Repository<Booking>>();
+            services.AddScoped<IRepository<Client>, Repository<Client>>();
+            services.AddScoped<IRepository<GiftCertificate>, Repository<GiftCertificate>>();
+
+            services.AddScoped<IQuestRepository, QuestRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<IClientRepository, ClientRepository>();
+            services.AddScoped<IGiftCertificateRepository, GiftCertificateRepository>();
+
+            // Реєстрація Unit of Work
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Реєстрація сервісів
+            services.AddScoped<IQuestService, QuestService>();
+            services.AddScoped<IClientService, ClientService>();
+            services.AddScoped<IBookingService, BookingService>();
+            services.AddScoped<IGiftCertificateService, GiftCertificateService>();
+
+            // Реєстрація UI контролера
+            services.AddScoped<QuestRoomUIController>();
+
+            // Створення провайдера сервісів
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Отримання UI контролера
+            var uiController = serviceProvider.GetRequiredService<QuestRoomUIController>();
 
             // Заповнення тестовими даними, якщо потрібно
             uiController.SeedData();

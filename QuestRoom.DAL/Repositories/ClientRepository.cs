@@ -6,13 +6,12 @@ using QuestRoom.DAL.QuestRoom.DAL;
 
 namespace QuestRoom.DAL.Repositories
 {
-    public class ClientRepository : Repository<Client>
+    public class ClientRepository : Repository<Client>, IClientRepository
     {
         public ClientRepository(QuestRoomDbContext context) : base(context)
         {
         }
 
-      
         public Client GetClientWithBookings(int id)
         {
             return _context.Clients

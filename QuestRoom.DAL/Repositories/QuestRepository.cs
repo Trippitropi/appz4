@@ -5,13 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using QuestRoom.DAL.QuestRoom.DAL;
 namespace QuestRoom.DAL.Repositories
 {
-    public class QuestRepository : Repository<Quest>
+    public class QuestRepository : Repository<Quest>, IQuestRepository
     {
         public QuestRepository(QuestRoomDbContext context) : base(context)
         {
         }
 
-        
         public Quest GetQuestWithBookings(int id)
         {
             return _context.Quests

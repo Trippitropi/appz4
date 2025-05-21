@@ -1,37 +1,32 @@
 ﻿using System;
 using System.Linq;
-using QuestRoom.DAL;
 using QuestRoom.DAL.Entities;
-using QuestRoom.DAL.Repositories;
 using QuestRoom.BLL.Services;
-using QuestRoom.DAL.QuestRoom.DAL;
-using QuestRoom.DAL.UnitOfWork;
 
 namespace appz4
 {
     public class QuestRoomUIController
     {
-        private readonly QuestService _questService;
-        private readonly ClientService _clientService;
-        private readonly BookingService _bookingService;
-        private readonly GiftCertificateService _certificateService;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IQuestService _questService;
+        private readonly IClientService _clientService;
+        private readonly IBookingService _bookingService;
+        private readonly IGiftCertificateService _certificateService;
 
-        public QuestRoomUIController(QuestRoomDbContext dbContext)
+        public QuestRoomUIController(
+            IQuestService questService,
+            IClientService clientService,
+            IBookingService bookingService,
+            IGiftCertificateService certificateService)
         {
-            // Ініціалізація Unit of Work
-            _unitOfWork = new UnitOfWork(dbContext);
-
-            // Ініціалізація сервісів з Unit of Work
-            _questService = new QuestService(_unitOfWork);
-            _clientService = new ClientService(_unitOfWork);
-            _bookingService = new BookingService(_unitOfWork);
-            _certificateService = new GiftCertificateService(_unitOfWork);
+            _questService = questService;
+            _clientService = clientService;
+            _bookingService = bookingService;
+            _certificateService = certificateService;
         }
 
         public void SeedData()
         {
-            if (!_unitOfWork.Quests.GetAll().Any())
+            if (!_questService.GetAllQuests().Any())
             {
                 var quests = new[]
                 {
@@ -42,7 +37,7 @@ namespace appz4
 
                 foreach (var quest in quests)
                 {
-                    _unitOfWork.Quests.Add(quest);
+                    _questService.AddQuest(quest);
                 }
 
                 var clients = new[]
@@ -53,14 +48,12 @@ namespace appz4
 
                 foreach (var client in clients)
                 {
-                    _unitOfWork.Clients.Add(client);
+                    _clientService.AddClient(client);
                 }
-
-                _unitOfWork.Complete();
             }
         }
 
-        // Інші методи залишаються без змін
+
         public void ShowAllQuests()
         {
             var quests = _questService.GetAllQuests();

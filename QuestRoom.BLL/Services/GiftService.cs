@@ -3,18 +3,16 @@ using QuestRoom.DAL.UnitOfWork;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QuestRoom.BLL.Services
 {
-    public class GiftCertificateService
+    public class GiftCertificateService : IGiftCertificateService
     {
         private readonly IUnitOfWork _unitOfWork;
 
         public GiftCertificateService(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         }
 
         public GiftCertificate GetCertificateById(int id)

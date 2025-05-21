@@ -7,13 +7,12 @@ using QuestRoom.DAL.QuestRoom.DAL;
 
 namespace QuestRoom.DAL.Repositories
 {
-    public class BookingRepository : Repository<Booking>
+    public class BookingRepository : Repository<Booking>, IBookingRepository
     {
         public BookingRepository(QuestRoomDbContext context) : base(context)
         {
         }
 
-      
         public override Booking GetById(int id)
         {
             return _context.Bookings
@@ -23,7 +22,6 @@ namespace QuestRoom.DAL.Repositories
                 .FirstOrDefault(b => b.Id == id);
         }
 
-        
         public IEnumerable<Booking> GetBookingsByQuestId(int questId)
         {
             return _context.Bookings
@@ -32,7 +30,6 @@ namespace QuestRoom.DAL.Repositories
                 .ToList();
         }
 
-       
         public bool IsTimeSlotAvailable(int questId, DateTime startTime, DateTime endTime)
         {
             return !_context.Bookings

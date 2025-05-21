@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace QuestRoom.DAL.Repositories
 {
-    public class GiftCertificateRepository : Repository<GiftCertificate>
+    public class GiftCertificateRepository : Repository<GiftCertificate>, IGiftCertificateRepository
     {
         public GiftCertificateRepository(QuestRoomDbContext context) : base(context)
         {
         }
 
-        
         public IEnumerable<GiftCertificate> GetActiveCertificatesForClient(int clientId)
         {
             return _context.GiftCertificates
@@ -22,14 +21,12 @@ namespace QuestRoom.DAL.Repositories
                 .ToList();
         }
 
-       
         public bool IsValidCertificate(string code)
         {
             return _context.GiftCertificates
                 .Any(g => g.Code == code && !g.IsUsed && g.ExpiryDate > DateTime.Now);
         }
 
-        
         public GiftCertificate GetByCode(string code)
         {
             return _context.GiftCertificates
