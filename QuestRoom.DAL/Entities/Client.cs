@@ -5,46 +5,37 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace QuestRoom.DAL.Entities
 {
-    public class Quest
+    public class Client
     {
-
         [Key]
         public int Id { get; set; }
 
         [Required]
-        [StringLength(100)]
+        [StringLength(50)]
         public string Name { get; set; }
 
         [Required]
-        public string Description { get; set; }
+        [StringLength(50)]
+        public string Email { get; set; }
 
-        [Required]
-        public int MaxParticipants { get; set; }
-
-        [Required]
-        public int DurationMinutes { get; set; }
-
-        [Required]
-        public decimal Price { get; set; }
-
-        [StringLength(255)]
-        public string? ImageUrl { get; set; }
-
-        public bool IsActive { get; set; } = true;
-
-      
         [StringLength(20)]
-        public string DifficultyLevel { get; set; }
+        public string Phone { get; set; }
 
         
         public virtual ICollection<Booking> Bookings { get; set; }
 
-        public Quest()
+        
+        public virtual ICollection<GiftCertificate> OwnedCertificates { get; set; }
+
+        public Client()
         {
             Bookings = new HashSet<Booking>();
+            OwnedCertificates = new HashSet<GiftCertificate>();
         }
+
+
     }
 }
+
