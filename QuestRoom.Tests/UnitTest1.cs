@@ -312,7 +312,7 @@ namespace QuestRoom.Tests
         public void CancelBooking_WithInvalidId_ShouldReturnFalse()
         {
             // Arrange
-            int bookingId = 999; // Неіснуючий ID
+            int bookingId = 999; 
 
             var mockBookingRepo = new Mock<IBookingRepository>();
             mockBookingRepo.Setup(repo => repo.GetById(bookingId)).Returns((Booking)null);

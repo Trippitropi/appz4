@@ -1,0 +1,6 @@
+@QuestRoom.PL_HostAddress = http://localhost:5046
+
+GET {{QuestRoom.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
